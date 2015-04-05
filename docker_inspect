@@ -1,0 +1,42 @@
+#!/usr/bin/python
+
+from docker import Client
+from ansible.module_utils.basic import *
+
+result = dict()
+
+
+module = AnsibleModule(
+        argument_spec   = dict(
+#        host            = dict(required=True),
+#	container_id	= dict(required=True)
+        ),
+        supports_check_mode = False
+)
+
+'''
+host = module.params['host']
+container_id = module.params['container_id']
+'''
+
+#cli = Client(base_url='unix://var/run/docker.sock')
+cli = Client(base_url='tcp://localhost:2375')
+
+containers_list = []
+containers = cli.containers()
+for item in containers:
+	containers_list.append(item['Id'])
+
+with open('/home/amit/ANSIBLE/files/docker_inspect.txt','a') as f:
+	for item in containers_list:
+		output = cli.inspect_container(item)
+		f.write('name = %s\n' % output['Name'].strip('/'))
+		f.write('ip_address = %s\n' % output['NetworkSettings']['IPAddress'])
+		f.write('prefix_len = %s\n' % output['NetworkSettings']['IPPrefixLen'])
+		f.write('gateway = %s\n' % output['NetworkSettings']['Gateway'])
+		f.write('mac_address = %s\n' %  output['NetworkSettings']['MacAddress'])
+		f.write('bridge = %s\n' % output['NetworkSettings']['Bridge'])
+		f.write('\n\n')
+
+result['ok'] = True
+module.exit_json(**result)

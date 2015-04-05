@@ -1,0 +1,9 @@
+---
+  - name: Inspect Docker
+    hosts: local
+    gather_facts: no
+    connection: local
+
+    tasks:
+    - name: inspecting containers
+      docker_inspect:       
