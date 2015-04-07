@@ -19,8 +19,8 @@ host = module.params['host']
 container_id = module.params['container_id']
 '''
 
-#cli = Client(base_url='unix://var/run/docker.sock')
-cli = Client(base_url='tcp://localhost:2375')
+cli = Client(base_url='unix://var/run/docker.sock')
+#cli = Client(base_url='tcp://localhost:2375')
 
 containers_list = []
 containers = cli.containers()
